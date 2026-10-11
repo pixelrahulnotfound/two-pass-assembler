@@ -1,0 +1,30 @@
+Name: YOUR NAME HERE, ID: YOUR ID HERE
+Claims for CS2102 IITPSx MiniProject 2026
+=========================================
+Assembler (60%):
+- Single routine assemble(src,pass) for both passes: YES (asm.c assemble())
+- Diagnoses duplicate/missing labels: YES (test02.asm)
+- Listing file at least memory dump: YES (all .lst)
+- Advanced listing with mnemonics+labels: YES
+- Table of instruction names/operands: YES (op_table)
+- Assembles test program: YES (test01.asm)
+- Extra pass+fail tests with comments: YES (test01-05)
+- SET implemented+demo: YES (test03.asm)
+- mul/div in assembler: YES (test04.asm, opcodes 19/20)
+- Bubble sort assembles: YES (bubble.asm)
+- Bubble sort works: YES (run emu, memory sorted)
+Emulator (25%):
+- Loads object file: YES
+- Memory dump (-dump): YES
+- Executes test program: YES
+- mul/div + div0 detect: YES
+- Errant programs (bad opcode/addr, step limit, shift range): YES
+Tests (15%):
+- sum 1..5 + mean via div: test05.asm
+- mul/div test: test04.asm
+- bubble sort: bubble.asm
+Build:
+- gcc -std=c89 -pedantic -W -Wall -Wpointer-arith -Wwrite-strings -Wstrict-prototypes
+- gcc asm.c -o asm ; gcc emu.c -o emu ; make
+GUI:
+- gui.py Tkinter wrapper calling ./asm and ./emu -trace

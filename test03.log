@@ -1,0 +1,2 @@
+assembled test03.asm -> test03.bin, test03.lst
+HALT: A=141 B=0 PC=3 SP=65535 steps=3

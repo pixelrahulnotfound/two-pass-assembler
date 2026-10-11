@@ -1,0 +1,10 @@
+test02.asm:4: error: duplicate label 'label'
+test02.asm:5: error: no such label 'nonesuch'
+test02.asm:6: error: invalid number '08ge'
+test02.asm:7: error: missing operand for 'ldc'
+test02.asm:8: error: unexpected operand for 'add'
+test02.asm:9: error: extra text after operand
+test02.asm:10: error: invalid label name '0def'
+test02.asm:11: error: unknown mnemonic 'fibble'
+test02.asm:12: error: unknown mnemonic '0def'
+assembly failed with 9 error(s)

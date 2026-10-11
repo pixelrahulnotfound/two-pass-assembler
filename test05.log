@@ -1,0 +1,2 @@
+assembled test05.asm -> test05.bin, test05.lst
+HALT: A=3 B=15 PC=35 SP=65535 steps=115
