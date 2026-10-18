@@ -1,0 +1,14 @@
+== test2: assemble with my asm.c ==
+provided_tests/test2.asm:4: error: duplicate label 'label'
+provided_tests/test2.asm:5: error: no such label 'nonesuch'
+provided_tests/test2.asm:6: error: invalid number '08ge'
+provided_tests/test2.asm:7: error: missing operand for 'ldc'
+provided_tests/test2.asm:8: error: unexpected operand for 'add'
+provided_tests/test2.asm:9: error: extra text after operand
+provided_tests/test2.asm:10: error: invalid label name '0def'
+provided_tests/test2.asm:11: error: unknown mnemonic 'fibble'
+provided_tests/test2.asm:12: error: unknown mnemonic '0def'
+assembly failed with 9 error(s)
+-- asm exit: 1 --
+
+== expected errors (test file designed to fail assembly) ==

@@ -1,0 +1,9 @@
+== test3: assemble with my asm.c ==
+assembled provided_tests/test3.asm -> provided_tests/test3.bin, provided_tests/test3.mylst
+-- asm exit: 0 --
+
+== object file comparison ==
+PASS: provided_tests/test3.bin is BYTE-IDENTICAL to reference provided_tests/expected/test3.o
+
+== run with my emu.c ==
+runtime error: program counter 2 past end of program (no HALT)

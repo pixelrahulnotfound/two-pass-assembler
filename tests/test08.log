@@ -1,0 +1,6 @@
+== asm tests/test08.asm ==
+assembled tests/test08.asm -> tests/test08.bin, tests/test08.lst
+
+== emu tests/test08.bin ==
+HALT: A=120 B=0 PC=22 SP=0 steps=87
+-- expected A=120 (5! using mul in a loop) --

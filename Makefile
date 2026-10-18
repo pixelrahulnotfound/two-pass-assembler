@@ -6,4 +6,4 @@ asm: asm.c
 emu: emu.c
 	$(CC) $(CFLAGS) emu.c -o emu
 clean:
-	rm -f asm emu *.bin *.lst out.bin out.lst
+	rm -f asm emu out.bin out.lst

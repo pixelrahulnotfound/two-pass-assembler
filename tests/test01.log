@@ -1,0 +1,7 @@
+== asm tests/test01.asm ==
+assembled tests/test01.asm -> tests/test01.bin, tests/test01.lst
+-- asm exit: 0 (0 = no errors, file is valid) --
+
+== emu tests/test01.bin (infinite loop by design, limited) ==
+runtime error: step limit 1000 exceeded (infinite loop?)
+-- emu exit: 1 (step limit trap works) --

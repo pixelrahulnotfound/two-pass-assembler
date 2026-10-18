@@ -1,0 +1,14 @@
+== asm tests/test02.asm ==
+tests/test02.asm:4: error: duplicate label 'label'
+tests/test02.asm:5: error: no such label 'nonesuch'
+tests/test02.asm:6: error: invalid number '08ge'
+tests/test02.asm:7: error: missing operand for 'ldc'
+tests/test02.asm:8: error: unexpected operand for 'add'
+tests/test02.asm:9: error: extra text after operand
+tests/test02.asm:10: error: invalid label name '0def'
+tests/test02.asm:11: error: unknown mnemonic 'fibble'
+tests/test02.asm:12: error: unknown mnemonic '0def'
+assembly failed with 9 error(s)
+-- asm exit: 1 (1 = errors found, no object file produced) --
+
+ls: cannot access 'tests/test02.bin': No such file or directory

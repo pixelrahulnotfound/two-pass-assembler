@@ -1,0 +1,6 @@
+== asm tests/test05.asm ==
+assembled tests/test05.asm -> tests/test05.bin, tests/test05.lst
+
+== emu tests/test05.bin ==
+HALT: A=3 B=15 PC=35 SP=0 steps=115
+-- expected A=3 B=15 (sum 1..5 = 15, mean = 15/5 = 3) --

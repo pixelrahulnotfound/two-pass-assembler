@@ -1,0 +1,9 @@
+== test4: assemble with my asm.c ==
+assembled provided_tests/test4.asm -> provided_tests/test4.bin, provided_tests/test4.mylst
+-- asm exit: 0 --
+
+== object file comparison ==
+PASS: provided_tests/test4.bin is BYTE-IDENTICAL to reference provided_tests/expected/test4.o
+
+== run with my emu.c ==
+HALT: A=0 B=0 PC=10 SP=4096 steps=47654

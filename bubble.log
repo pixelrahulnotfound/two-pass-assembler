@@ -1,2 +1,0 @@
-assembled bubble.asm -> bubble.bin, bubble.lst
-HALT: A=0 B=4 PC=105 SP=65535 steps=958

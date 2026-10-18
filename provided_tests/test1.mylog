@@ -1,0 +1,9 @@
+== test1: assemble with my asm.c ==
+assembled provided_tests/test1.asm -> provided_tests/test1.bin, provided_tests/test1.mylst
+-- asm exit: 0 --
+
+== object file comparison ==
+PASS: provided_tests/test1.bin is BYTE-IDENTICAL to reference provided_tests/expected/test1.o
+
+== run with my emu.c ==
+runtime error: step limit 5000 exceeded (infinite loop?)

@@ -1,0 +1,7 @@
+== asm tests/bubble.asm ==
+assembled tests/bubble.asm -> tests/bubble.bin, tests/bubble.lst
+
+== emu tests/bubble.bin ==
+HALT: A=0 B=4 PC=105 SP=0 steps=958
+-- memory words 1..5 (the array) after sort --
+sorted arr: [1, 2, 3, 4, 5] - expected [1, 2, 3, 4, 5]

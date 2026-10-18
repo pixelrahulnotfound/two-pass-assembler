@@ -1,0 +1,15 @@
+== test7: assemble with my asm.c ==
+provided_tests/test7.asm:18: error: duplicate label 'dup'
+provided_tests/test7.asm:1: error: invalid label name '1badlabel'
+provided_tests/test7.asm:5: error: missing operand for 'ldc'
+provided_tests/test7.asm:7: error: unexpected operand for 'add'
+provided_tests/test7.asm:9: error: unknown mnemonic 'foo'
+provided_tests/test7.asm:11: error: invalid operand 'missing_label'
+provided_tests/test7.asm:13: error: unknown mnemonic '//'
+provided_tests/test7.asm:21: error: no such label 'hello'
+provided_tests/test7.asm:23: error: SET without label
+provided_tests/test7.asm:25: error: no such label 'abc'
+assembly failed with 10 error(s)
+-- asm exit: 1 --
+
+== expected errors (test file designed to fail assembly) ==

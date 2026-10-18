@@ -1,0 +1,6 @@
+== asm tests/test03.asm ==
+assembled tests/test03.asm -> tests/test03.bin, tests/test03.lst
+
+== emu tests/test03.bin ==
+HALT: A=141 B=0 PC=3 SP=0 steps=3
+-- expected A=141 (SET 75 + SET 66) --

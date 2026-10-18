@@ -1,6 +1,5 @@
-/* IITPSx Assembler - CS2102 MiniProject 2026
- * Name: YOUR NAME HERE
- * ID: YOUR ID HERE
+/*
+ * IITPSx Assembler - CS2102 MiniProject 2026
  * Declaration: This is my own work, written from scratch.
  * Target: ISO C89, compile with:
  * gcc -std=c89 -pedantic -W -Wall -Wpointer-arith -Wwrite-strings -Wstrict-prototypes asm.c -o asm
@@ -10,7 +9,6 @@
 #include <string.h>
 #include <ctype.h>
 
-/* ---------- instruction table ---------- */
 typedef struct OpInfo {
   const char *name;
   int opcode;
@@ -18,6 +16,7 @@ typedef struct OpInfo {
   int is_branch;
 } OpInfo;
 
+/* Instruction metadata drives operand checks and branch-offset encoding. */
 static const OpInfo op_table[] = {
   {"ldc", 0, 1, 0}, {"adc", 1, 1, 0}, {"ldl", 2, 1, 0},
   {"stl", 3, 1, 0}, {"ldnl", 4, 1, 0}, {"stnl", 5, 1, 0},
@@ -25,11 +24,12 @@ static const OpInfo op_table[] = {
   {"shr", 9, 0, 0}, {"adj", 10, 1, 0}, {"a2sp", 11, 0, 0},
   {"sp2a", 12, 0, 0}, {"call", 13, 1, 1}, {"return", 14, 0, 0},
   {"brz", 15, 1, 1}, {"brlz", 16, 1, 1}, {"br", 17, 1, 1},
-  {"HALT", 18, 0, 0}, {"mul", 19, 0, 0}, {"div", 20, 0, 0},
+  {"HALT", 18, 0, 0}, {"halt", 18, 0, 0}, {"mul", 19, 0, 0}, {"div", 20, 0, 0},
+  /* Pseudo-ops are handled separately and do not use a machine opcode. */
   {"data", -1, 1, 0}, {"SET", -1, 1, 0}
 };
 
-/* ---------- symbol table ---------- */
+/* The symbol table and input buffers use fixed bounds for this C89 implementation. */
 #define MAX_SYM 1024
 #define MAX_LINE 1024
 #define MAX_LAB 64
@@ -45,7 +45,6 @@ static int nsym = 0;
 static int nerr = 0;
 static const char *curfile = "";
 
-/* ---------- prototypes (C89 strict) ---------- */
 const OpInfo *findOp(const char *name);
 int isValidLabel(const char *name);
 int findSym(const char *name);
@@ -56,7 +55,6 @@ int isSetOp(const char *mn);
 int isDataOp(const char *mn);
 int assemble(const char *src, int pass, FILE *bin, FILE *lst);
 
-/* ---------- helpers ---------- */
 const OpInfo *findOp(const char *name)
 {
   int i;
@@ -98,6 +96,7 @@ int isValidLabel(const char *name)
 
 int findSym(const char *name)
 {
+  /* Return the symbol-table index, or -1 when the name has not been defined. */
   int i;
   for (i = 0; i < nsym; i++) {
     if (strcmp(symtab[i].name, name) == 0) {
@@ -109,6 +108,7 @@ int findSym(const char *name)
 
 int addSym(const char *name, int val, int is_set)
 {
+  /* Keep each label unique and within the fixed-size symbol table. */
   if (nsym >= MAX_SYM) {
     return -1;
   }
@@ -125,6 +125,7 @@ int addSym(const char *name, int val, int is_set)
 
 void trim(char *s)
 {
+  /* Remove surrounding whitespace in place before tokenizing a source line. */
   char *p;
   char *q;
   size_t len;
@@ -169,6 +170,7 @@ int parseNum(const char *s, long *out)
   } else if (!isdigit((unsigned char)s[0])) {
     return 0;
   }
+  /* Base zero accepts decimal, 0x-prefixed hexadecimal, and leading-zero octal. */
   v = strtol(s, &end, 0);
   if (end == s) {
     return 0;
@@ -228,7 +230,7 @@ int assemble(const char *src, int pass, FILE *bin, FILE *lst)
     int pr;
 
     lineno++;
-    /* strip newline already handled by trim later; cut comment */
+    /* Comments are removed before labels and operands are parsed. */
     semi = strchr(line, ';');
     if (semi != NULL) {
       *semi = '\0';
@@ -239,9 +241,9 @@ int assemble(const char *src, int pass, FILE *bin, FILE *lst)
     if (work[0] == '\0') {
       continue;
     }
-    /* split label if any */
+    /* Separate an optional label from the statement on the same source line. */
     strcpy(work, line);
-    /* need fresh copy before trim for colon search: search on work */
+    /* Keep the untrimmed line so the label delimiter can be found reliably. */
     colon = strchr(work, ':');
     label[0] = '\0';
     rest[0] = '\0';
@@ -283,7 +285,7 @@ int assemble(const char *src, int pass, FILE *bin, FILE *lst)
       strcpy(rest, work);
       trim(rest);
     }
-    /* label-only line? */
+    /* A label-only line names the current address without emitting a word. */
     if (haslabel && rest[0] == '\0') {
       if (pass == 1) {
         if (findSym(label) >= 0) {
@@ -320,7 +322,7 @@ int assemble(const char *src, int pass, FILE *bin, FILE *lst)
       pc++;
       continue;
     }
-    /* SET pseudo-op: label must exist, no memory */
+    /* SET assigns a constant to a label and does not advance the program counter. */
     if (isSetOp(mn)) {
       long sv;
       int got;
@@ -398,7 +400,7 @@ int assemble(const char *src, int pass, FILE *bin, FILE *lst)
       (void)got;
       continue;
     }
-    /* normal label definition (not SET): value = pc */
+    /* Ordinary labels name the address of their instruction or data word. */
     if (haslabel && pass == 1) {
       if (findSym(label) >= 0) {
         fprintf(stderr, "%s:%d: error: duplicate label '%s'\n", src, lineno, label);
@@ -407,7 +409,7 @@ int assemble(const char *src, int pass, FILE *bin, FILE *lst)
         addSym(label, pc, 0);
       }
     }
-    /* operand count checks */
+    /* Validate operands using the instruction table before resolving their values. */
     if (op->has_operand && n < 2) {
       if (pass == 2) {
         fprintf(stderr, "%s:%d: error: missing operand for '%s'\n", src, lineno, mn);
@@ -441,7 +443,7 @@ int assemble(const char *src, int pass, FILE *bin, FILE *lst)
       pc++;
       continue;
     }
-    /* resolve operand value */
+    /* Resolve numeric operands and symbols; branches use a PC-relative offset. */
     {
       long v;
       int addr;
@@ -482,7 +484,7 @@ int assemble(const char *src, int pass, FILE *bin, FILE *lst)
           }
         }
       }
-      /* emit in pass 2 */
+      /* Pass 2 writes data words or packs a signed 24-bit operand and 8-bit opcode. */
       if (pass == 2 && bin != NULL && lst != NULL) {
         if (haslabel) {
           fprintf(lst, "%08X %s:\n", (unsigned)addr, label);
@@ -534,9 +536,9 @@ int main(int argc, char *argv[])
   lstn = (argc >= 4) ? argv[3] : "out.lst";
   nsym = 0;
   nerr = 0;
-  /* pass 1 */
+  /* Pass 1 collects symbol addresses so forward references can be resolved. */
   e1 = assemble(src, 1, NULL, NULL);
-  /* pass 2 */
+  /* Pass 2 emits the object and listing after the symbol table is complete. */
   bin = fopen(obj, "wb");
   if (bin == NULL) {
     fprintf(stderr, "cannot open output %s\n", obj);

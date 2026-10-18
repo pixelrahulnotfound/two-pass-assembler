@@ -1,0 +1,6 @@
+== asm tests/test07.asm ==
+assembled tests/test07.asm -> tests/test07.bin, tests/test07.lst
+
+== emu tests/test07.bin ==
+HALT: A=66 B=15 PC=31 SP=0 steps=28
+-- expected A=66 (2*5^2 + 3*5 + 1) --

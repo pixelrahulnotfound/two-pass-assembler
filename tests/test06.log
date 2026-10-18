@@ -1,0 +1,6 @@
+== asm tests/test06.asm (division by zero) ==
+assembled tests/test06.asm -> tests/test06.bin, tests/test06.lst
+
+== emu tests/test06.bin ==
+runtime error: division by zero
+-- expected: division by zero runtime error --

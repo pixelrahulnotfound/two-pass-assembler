@@ -1,2 +1,0 @@
-assembled test01.asm -> test01.bin, test01.lst
-runtime error: step limit 10 exceeded (infinite loop?)

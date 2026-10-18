@@ -1,0 +1,10 @@
+== test5: assemble with my asm.c ==
+assembled provided_tests/test5.asm -> provided_tests/test5.bin, provided_tests/test5.mylst
+-- asm exit: 0 --
+
+== object file comparison ==
+PASS: provided_tests/test5.bin is BYTE-IDENTICAL to reference provided_tests/expected/test5.o
+
+== run with my emu.c ==
+HALT: A=0 B=55 PC=19 SP=0 steps=111
+  sum variable = 55 (expected 55: sum of 1..10)

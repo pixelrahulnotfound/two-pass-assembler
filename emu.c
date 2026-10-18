@@ -1,6 +1,5 @@
-/* IITPSx Emulator - CS2102 MiniProject 2026
- * Name: YOUR NAME HERE
- * ID: YOUR ID HERE
+/*
+ * IITPSx Emulator - CS2102 MiniProject 2026
  * Declaration: This is my own work, written from scratch.
  * Target: ISO C89, compile with:
  * gcc -std=c89 -pedantic -W -Wall -Wpointer-arith -Wwrite-strings -Wstrict-prototypes emu.c -o emu
@@ -55,6 +54,7 @@ static const char *mnemonic(int op)
 
 static int signExt24(unsigned raw)
 {
+  /* The instruction's upper 24 bits are a signed two's-complement operand. */
   raw = raw & 0x00FFFFFFU;
   if (raw & 0x00800000U) {
     raw |= 0xFF000000U;
@@ -64,6 +64,7 @@ static int signExt24(unsigned raw)
 
 static int checkAddr(int a, const char *what)
 {
+  /* Keep stack, data, and instruction accesses inside the emulator's memory. */
   if (a < 0 || a >= MEMSIZE) {
     fprintf(stderr, "runtime error: %s address %d out of bounds\n", what, a);
     return 0;
@@ -93,6 +94,7 @@ int main(int argc, char *argv[])
   dotrace = 0;
   dodump = 0;
   maxsteps = STEP_LIMIT;
+  /* Options may appear before or after the object-file name. */
   /* parse args */
   for (i = 1; i < argc; i++) {
     if (strcmp(argv[i], "-trace") == 0) {
@@ -124,6 +126,7 @@ int main(int argc, char *argv[])
     fprintf(stderr, "cannot open object %s\n", obj);
     return 1;
   }
+  /* Clear uninitialized memory, then load each 32-bit object word at address 0. */
   for (i = 0; i < MEMSIZE; i++) {
     mem[i] = 0;
   }
@@ -141,7 +144,7 @@ int main(int argc, char *argv[])
   A = 0;
   B = 0;
   PC = 0;
-  SP = MEMSIZE - 1;
+  SP = 0;
   steps = 0;
   halted = 0;
   while (!halted) {
@@ -153,9 +156,14 @@ int main(int argc, char *argv[])
       fprintf(stderr, "runtime error: step limit %d exceeded (infinite loop?)\n", maxsteps);
       return 1;
     }
+    if (PC >= proglen) {
+      fprintf(stderr, "runtime error: program counter %d past end of program (no HALT)\n", PC);
+      return 1;
+    }
     if (!checkAddr(PC, "PC")) {
       return 1;
     }
+    /* Fetch advances PC first; relative branches are based on this next address. */
     curpc = PC;
     instr = mem[PC];
     PC++;
@@ -167,6 +175,7 @@ int main(int argc, char *argv[])
     }
     steps++;
     switch (op) {
+      /* Load/store operations use the stack pointer or accumulator as their base. */
       case 0: B = A; A = operand; break;
       case 1: A = A + operand; break;
       case 2:
@@ -181,6 +190,7 @@ int main(int argc, char *argv[])
       case 5:
         if (!checkAddr(A + operand, "stnl")) return 1;
         mem[A + operand] = B; break;
+      /* Arithmetic uses the A/B stack pair; shifts require a 0..31 count. */
       case 6: A = B + A; break;
       case 7: A = B - A; break;
       case 8:
@@ -195,6 +205,7 @@ int main(int argc, char *argv[])
           return 1;
         }
         A = B >> A; break;
+      /* Stack-pointer transfers and calls follow the processor's register rules. */
       case 10: SP = SP + operand;
         if (!checkAddr(SP, "SP after adj")) return 1;
         break;
@@ -206,10 +217,12 @@ int main(int argc, char *argv[])
         if (!checkAddr(PC, "PC after call") && PC != proglen) return 1;
         break;
       case 14: PC = A; A = B; break;
+      /* Branch displacements are relative to PC after the fetch increment. */
       case 15: if (A == 0) PC = PC + operand; break;
       case 16: if (A < 0) PC = PC + operand; break;
       case 17: PC = PC + operand; break;
       case 18: halted = 1; break;
+      /* Arithmetic extensions use signed C integers; div checks its divisor first. */
       case 19: A = B * A; break;
       case 20:
         if (A == 0) {
@@ -237,6 +250,7 @@ int main(int argc, char *argv[])
         return 1;
       }
     }
+    /* Dump the loaded program words, including any changes made while running. */
     for (i = 0; i < proglen; i++) {
       fprintf(df, "%08X %08X\n", (unsigned)i, (unsigned)mem[i]);
     }

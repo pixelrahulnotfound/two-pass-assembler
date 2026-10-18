@@ -1,2 +1,0 @@
-assembled test04.asm -> test04.bin, test04.lst
-HALT: A=21 B=42 PC=6 SP=65535 steps=6
